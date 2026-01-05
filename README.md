@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# sst-workflows
 
-## Getting Started
+A minimal integration of Github `slash` commands, status checks, and deployment statuses with SST deployment workflows.
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This repository demonstrates how to add manual, slash-based triggers to `deploy`, `destroy`, and `staging`, allowing maintainers to manage SST deployments without requiring local AWS credentials.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> [!Note]
+> This repository deploys an unmodified Next.js application to AWS via SST. No further focus will be given to the application itself.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+There are three classes of workflows:
+1. `deploy` (one for production, one for staging)
+2. `destroy_staging`
+3. `unlock_staging`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The `deploy` workflow runs automatically when a branch is created or updated. The `destroy` workflow runs automatically when a branch is closed.
 
-## Learn More
+### Github Marketplace
 
-To learn more about Next.js, take a look at the following resources:
+We make use of three open-source Github Actions via the Github Marketplace to facilitate `slash` based workflows.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. [peter-evans/slash-command-dispatch](https://github.com/peter-evans/slash-command-dispatch)@v4 — for parsing slash commands and dispatching workflows
+2. [myrotvorets/set-commit-status-action](https://github.com/myrotvorets/set-commit-status-action)@master — for creating non-deployment commit statuses
+3. [chrnorm/deployment-action](https://github.com/chrnorm/deployment-action)@v2 — for creating deployment statuses
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Usage
 
-## Deploy on Vercel
+There are three slash commands available in this repository.
+1. `/deploy`
+2. `/remove` 
+3. `/unlock` 
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+> [!NOTE]
+> Note that, although `/remove` corresponds to `destroy_staging.yml`, it is named in accordance with the SST command it triggers. 
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+On any open PR, the slash commands will initiate their respective workflows. 
+
+Here is the expected sequence when using a slash command: 
+1. User with `write` access submits a comment on a PR (e.g. "/remove")
+2. `slash-command-dispatch` detects the comment as matching one of its enumerated commands and acknowledges with a reaction "👀"
+3. `slash-command-dispatch` dispatches the workflow and confirms with a reaction "🚀"
+4. The workflow begins, either creating a deployment status (`deploy`) via `deployment-action` or creating a commit status (`destroy`, `unlock`) via `set-commit-status-action`, and sets the status to pending
+5. The workflow executes
+6. Upon completion, both `deployment-action` and `set-commit-status-action` will update their respective statuses to either success or failure.
