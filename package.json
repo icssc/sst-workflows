@@ -33,5 +33,10 @@
     "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
       "pnpm dlx ultracite fix"
     ]
-  }
+  },
+  "engines": {
+    "node": ">=22",
+    "pnpm": "^10.0.0"
+  },
+  "packageManager": "pnpm@10.22.0"
 }
