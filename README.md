@@ -10,6 +10,7 @@ This repository demonstrates how to add manual, slash-based triggers to `deploy`
 > This repository deploys an unmodified Next.js application to AWS via SST. No further focus will be given to the application itself.
 
 There are three classes of workflows:
+
 1. `deploy` (one for production, one for staging)
 2. `destroy_staging`
 3. `unlock_staging`
@@ -27,16 +28,18 @@ We make use of three open-source Github Actions via the Github Marketplace to fa
 ## Usage
 
 There are three slash commands available in this repository.
+
 1. `/deploy`
-2. `/remove` 
-3. `/unlock` 
+2. `/remove`
+3. `/unlock`
 
 > [!NOTE]
-> Note that, although `/remove` corresponds to `destroy_staging.yml`, it is named in accordance with the SST command it triggers. 
+> Note that, although `/remove` corresponds to `destroy_staging.yml`, it is named in accordance with the SST command it triggers.
 
-On any open PR, the slash commands will initiate their respective workflows. 
+On any open PR, the slash commands will initiate their respective workflows.
 
-Here is the expected sequence when using a slash command: 
+Here is the expected sequence when using a slash command:
+
 1. User with `write` access submits a comment on a PR (e.g. "/remove")
 2. `slash-command-dispatch` detects the comment as matching one of its enumerated commands and acknowledges with a reaction "👀"
 3. `slash-command-dispatch` dispatches the workflow and confirms with a reaction "🚀"

@@ -10,6 +10,8 @@ export default $config({
     };
   },
   async run() {
-    new sst.aws.Nextjs("MyWeb");
+    new sst.aws.Nextjs("SST_Workflows", {
+      cachePolicy: "a3edb90c-ab42-429d-8750-70acf9c1f7c0",
+    });
   },
 });
